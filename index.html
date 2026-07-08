@@ -1,0 +1,622 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ShopIQ - Smart Shopping</title>
+    <link rel="stylesheet" href="styles.css">
+    <!-- Add Font Awesome for the logo -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- Add this in the head section -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="auth.js"></script>
+    <style>
+        .original-price {
+            text-decoration: line-through;
+            color: #888; /* Optional: Grey color for the original price */
+            margin-left: 10px;
+        }
+    </style>
+</head>
+<body>
+    <script src="products.js"></script>
+    <header>
+        <nav>
+            <div class="brand">
+                <a href="index.html" class="home-link">
+                    <i class="fas fa-shopping-bag"></i>
+                    <h1>ShopIQ</h1>
+                </a>
+            </div>
+            <ul>
+                <li><a href="#shoes">Shoes</a></li>
+                <li><a href="#clothes">Clothes</a></li>
+                <li><a href="#accessories">Accessories</a></li>
+                <li>
+                    <a href="#" onclick="toggleWishlist(event)" style="position: relative;">
+                        <i class="fas fa-heart"></i>
+                        <span class="wishlist-count" id="wishlistCount">0</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="cart.html" style="position: relative;">
+                        <i class="fas fa-shopping-cart"></i>
+                        <span class="cart-count" id="cartCount">0</span>
+                    </a>
+                </li>
+                <li class="user-menu">
+                    <a href="#" onclick="toggleUserMenu(event)">
+                        <i class="fas fa-user"></i>
+                    </a>
+                    <div class="user-dropdown" id="userDropdown">
+                        <div class="user-info">
+                            <i class="fas fa-user-circle"></i>
+                            <span id="userName">Guest</span>
+                        </div>
+                        <hr>
+                        <a href="#" onclick="showLoginModal()"><i class="fas fa-sign-in-alt"></i> Login</a>
+                        <a href="#" onclick="showSignupModal()"><i class="fas fa-user-plus"></i> Sign Up</a>
+                        <a href="#" class="logged-in-only" onclick="viewOrders()"><i class="fas fa-box"></i> My Orders</a>
+                        <a href="#" class="logged-in-only" onclick="viewProfile()"><i class="fas fa-cog"></i> Settings</a>
+                        <a href="#" class="logged-in-only" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Logout</a>
+                    </div>
+                </li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <section id="shoes">
+            <h2>Shoes</h2>
+            <div class="product-grid" id="shoesGrid"></div>
+        </section>
+
+        <section id="clothes">
+            <h2>Clothes</h2>
+            <div class="product-grid" id="clothesGrid"></div>
+        </section>
+
+        <section id="accessories">
+            <h2>Accessories</h2>
+            <div class="product-grid" id="accessoriesGrid"></div>
+        </section>
+
+        <!-- <div id="productList" class="product-list">
+            <!-- Products will be dynamically inserted here -->
+        </div> -->
+    </main>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>About ShopIQ</h3>
+                <p>Your one-stop destination for fashion and accessories. We provide quality products at the best prices.</p>
+                <div class="social-links">
+                    <a href="#"><i class="fab fa-facebook"></i></a>
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                    <a href="#"><i class="fab fa-twitter"></i></a>
+                    <a href="#"><i class="fab fa-pinterest"></i></a>
+                </div>
+            </div>
+            
+            <div class="footer-section">
+                <h3>Quick Links</h3>
+                <ul>
+                    <li><a href="#shoes">Shoes</a></li>
+                    <li><a href="#clothes">Clothes</a></li>
+                    <li><a href="#accessories">Accessories</a></li>
+                    <li><a href="#">New Arrivals</a></li>
+                    <li><a href="#">Sale</a></li>
+                </ul>
+            </div>
+            
+            <div class="footer-section">
+                <h3>Customer Service</h3>
+                <ul>
+                    <li><a href="#">Contact Us</a></li>
+                    <li><a href="#">Shipping Policy</a></li>
+                    <li><a href="#">Returns & Exchange</a></li>
+                    <li><a href="#">FAQs</a></li>
+                </ul>
+            </div>
+            
+            <div class="footer-section">
+                <h3>Newsletter</h3>
+                <p>Subscribe to receive updates, access to exclusive deals, and more.</p>
+                <div class="newsletter-form">
+                    <input type="email" placeholder="Enter your email">
+                    <button class="subscribe-btn">Subscribe</button>
+                </div>
+            </div>
+        </div>
+        
+        <div class="footer-bottom">
+            <p>&copy; 2024 ShopIQ. All rights reserved.</p>
+            <div class="payment-methods">
+                <i class="fab fa-cc-visa"></i>
+                <i class="fab fa-cc-mastercard"></i>
+                <i class="fab fa-cc-paypal"></i>
+                <i class="fab fa-cc-apple-pay"></i>
+            </div>
+        </div>
+    </footer>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Filter products by category and render to respective grids
+            const shoesProducts = products.filter(p => p.category === 'Shoes');
+            const clothesProducts = products.filter(p => p.category === 'Clothes');
+            const accessoriesProducts = products.filter(p => p.category === 'Accessories');
+
+            // Clear existing content
+            document.getElementById('shoesGrid').innerHTML = '';
+            document.getElementById('clothesGrid').innerHTML = '';
+            document.getElementById('accessoriesGrid').innerHTML = '';
+
+            // Render products
+            renderProducts(shoesProducts, 'shoesGrid');
+            renderProducts(clothesProducts, 'clothesGrid');
+            renderProducts(accessoriesProducts, 'accessoriesGrid');
+        });
+
+        function renderProducts(productList, containerId) {
+            const container = document.getElementById(containerId);
+            if (!container) return;
+
+            productList.forEach(product => {
+                const productCard = document.createElement('div');
+                productCard.className = 'product-card';
+
+                // Calculate dynamic price based on average rating
+                const avgRating = calculateAverageRating(product.id);
+                const priceAdjustmentFactor = getPriceAdjustmentFactor(avgRating);
+                const originalPriceInINR = product.price * 75;
+                let finalPriceInINR = originalPriceInINR * priceAdjustmentFactor;
+
+                // Apply 10% discount if item is in wishlist
+                const isWishlistItem = isInWishlist(product.id);
+                if (isWishlistItem) {
+                    finalPriceInINR = finalPriceInINR * 0.9;
+                }
+
+                // Construct the price HTML
+                let priceHTML = `
+                    <p class="price">Price: ₹${finalPriceInINR.toLocaleString('en-IN', {
+                        maximumFractionDigits: 2,
+                        minimumFractionDigits: 2
+                    })}</p>
+                `;
+
+                // Add original price if there's any discount (from rating or wishlist)
+                if (finalPriceInINR !== originalPriceInINR) {
+                    priceHTML += `
+                        <p class="original-price">Original: ₹${originalPriceInINR.toLocaleString('en-IN', {
+                            maximumFractionDigits: 2,
+                            minimumFractionDigits: 2
+                        })}</p>
+                    `;
+                }
+
+                productCard.innerHTML = `
+                    <span class="product-category">${product.category}</span>
+                    <button onclick="toggleWishlistItem(event, ${product.id})" class="wishlist-btn ${isWishlistItem ? 'active' : ''}">
+                        <i class="fas fa-heart"></i>
+                    </button>
+                    <a href="product-details.html?id=${product.id}" class="product-image">
+                        <img src="${product.image}" alt="${product.name}" onerror="this.src='images/placeholder.jpg'">
+                    </a>
+                    <h3>${product.name}</h3>
+                    <div class="price-container">
+                        ${priceHTML}
+                    </div>
+                    <button onclick="addToCart(${product.id}, ${finalPriceInINR})" class="add-to-cart-btn">
+                        <i class="fas fa-shopping-cart"></i> Add to Cart
+                    </button>
+                `;
+
+                container.appendChild(productCard);
+            });
+
+            // If no products in category
+            if (productList.length === 0) {
+                container.innerHTML = `
+                    <div class="no-products">
+                        <p>No products available in this category.</p>
+                    </div>
+                `;
+            }
+        }
+
+        function addToCart(productId, price) {
+            const product = products.find(p => p.id === productId);
+            if (product) {
+                const existingItem = cart.find(item => item.id === productId);
+
+                if (existingItem) {
+                    existingItem.quantity += 1;
+                } else {
+                    cart.push({
+                        id: product.id,
+                        name: product.name,
+                        price: price, // Use the passed price
+                        image: product.image,
+                        quantity: 1
+                    });
+                }
+                localStorage.setItem('cart', JSON.stringify(cart));
+                updateCartCount();
+                showNotification('Product added to cart!');
+            }
+        }
+
+        // Initialize cart from localStorage
+        let cart = JSON.parse(localStorage.getItem('cart')) || [];
+        updateCartCount();
+
+        function updateCartCount() {
+            const cartCount = document.getElementById('cartCount');
+            const itemCount = cart.reduce((sum, item) => sum + item.quantity, 0);
+            cartCount.textContent = itemCount;
+            cartCount.style.display = itemCount > 0 ? 'block' : 'none';
+        }
+
+        function showNotification(message) {
+            const notification = document.createElement('div');
+            notification.className = 'notification';
+            notification.textContent = message;
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.classList.add('show');
+                setTimeout(() => {
+                    notification.classList.remove('show');
+                    setTimeout(() => {
+                        notification.remove();
+                    }, 300);
+                }, 2000);
+            }, 100);
+        }
+
+        // Add these after the cart initialization
+        let wishlist = JSON.parse(localStorage.getItem('wishlist')) || [];
+        updateWishlistCount();
+
+        function toggleWishlist(event) {
+            event.preventDefault();
+            const wishlistModal = document.querySelector('.wishlist-modal') || createWishlistModal();
+            wishlistModal.style.display = wishlistModal.style.display === 'flex' ? 'none' : 'flex';
+        }
+
+        function createWishlistModal() {
+            const modal = document.createElement('div');
+            modal.className = 'wishlist-modal';
+            modal.innerHTML = `
+                <div class="wishlist-content">
+                    <div class="wishlist-header">
+                        <h2>My Wishlist</h2>
+                        <button class="close-wishlist" onclick="closeWishlist()">×</button>
+                    </div>
+                    <div class="wishlist-items">
+                        ${renderWishlistItems()}
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(modal);
+            return modal;
+        }
+
+        function renderWishlistItems() {
+            return wishlist.length === 0 
+                ? '<p class="empty-wishlist">Your wishlist is empty</p>' 
+                : wishlist.map(item => {
+                    const discountedPrice = (item.price * 75).toLocaleString('en-IN'); // Use the same price logic
+                    return `
+                        <div class="wishlist-item">
+                            <img src="${item.image}" alt="${item.name}">
+                            <h3>${item.name}</h3>
+                            <p class="price">₹${discountedPrice}</p>
+                            <button onclick="addToCartFromWishlist(${item.id})" class="add-to-cart-btn">
+                                <i class="fas fa-shopping-cart"></i> Add to Cart
+                            </button>
+                            <button onclick="removeFromWishlist(event, ${item.id})" class="remove-wishlist">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                    `;
+                }).join('');
+        }
+
+        function closeWishlist() {
+            document.querySelector('.wishlist-modal').style.display = 'none';
+        }
+
+        function toggleWishlistItem(event, productId) {
+            event.preventDefault();
+            event.stopPropagation();
+            
+            const button = event.currentTarget;
+            const product = products.find(p => p.id === productId);
+            
+            if (!product) return;
+            
+            if (isInWishlist(productId)) {
+                wishlist = wishlist.filter(item => item.id !== productId);
+                button.classList.remove('active');
+                showNotification('Removed from wishlist!');
+            } else {
+                // Apply 10% discount when adding to wishlist
+                const discountedProduct = {
+                    ...product,
+                    price: product.price * 0.9 // Apply 10% discount
+                };
+                wishlist.push(discountedProduct);
+                button.classList.add('active');
+                showNotification('Added to wishlist with 10% discount!');
+            }
+            
+            localStorage.setItem('wishlist', JSON.stringify(wishlist));
+            updateWishlistCount();
+            updateWishlistModal();
+        }
+
+        function updateWishlistCount() {
+            const wishlistCount = document.getElementById('wishlistCount');
+            wishlistCount.textContent = wishlist.length;
+            wishlistCount.style.display = wishlist.length > 0 ? 'flex' : 'none';
+        }
+
+        function addToCartFromWishlist(productId) {
+            event.preventDefault();
+            event.stopPropagation();
+            
+            const wishlistItem = wishlist.find(item => item.id === productId);
+            if (wishlistItem) {
+                const existingItem = cart.find(item => item.id === productId);
+                if (existingItem) {
+                    existingItem.quantity += 1;
+                } else {
+                    cart.push({
+                        id: wishlistItem.id,
+                        name: wishlistItem.name,
+                        price: wishlistItem.price * 75, // Use the same price logic
+                        image: wishlistItem.image,
+                        quantity: 1
+                    });
+                }
+                localStorage.setItem('cart', JSON.stringify(cart));
+                updateCartCount();
+            }
+            
+            // Remove from wishlist
+            wishlist = wishlist.filter(item => item.id !== productId);
+            localStorage.setItem('wishlist', JSON.stringify(wishlist));
+            
+            // Update UI
+            updateWishlistCount();
+            updateWishlistModal();
+            
+            // Update wishlist button if visible
+            const wishlistBtn = document.querySelector(`.wishlist-btn[onclick*="${productId}"]`);
+            if (wishlistBtn) {
+                wishlistBtn.classList.remove('active');
+            }
+            
+            showNotification('Added to cart!');
+        }
+
+        function removeFromWishlist(event, productId) {
+            event.preventDefault();
+            event.stopPropagation();
+            
+            wishlist = wishlist.filter(item => item.id !== productId);
+            localStorage.setItem('wishlist', JSON.stringify(wishlist));
+            
+            // Update UI
+            updateWishlistCount();
+            updateWishlistModal();
+            
+            // Update wishlist button if visible
+            const wishlistBtn = document.querySelector(`.wishlist-btn[onclick*="${productId}"]`);
+            if (wishlistBtn) {
+                wishlistBtn.classList.remove('active');
+            }
+            
+            showNotification('Removed from wishlist!');
+        }
+
+        document.addEventListener('click', function(event) {
+            const wishlistModal = document.querySelector('.wishlist-modal');
+            const wishlistContent = document.querySelector('.wishlist-content');
+            if (wishlistModal && event.target === wishlistModal) {
+                closeWishlist();
+            }
+        });
+
+        // User Authentication Functions
+        let currentUser = JSON.parse(localStorage.getItem('currentUser')) || null;
+        updateUserInterface();
+
+        function toggleUserMenu(event) {
+            event.preventDefault();
+            const dropdown = document.getElementById('userDropdown');
+            dropdown.classList.toggle('active');
+            
+            // Close dropdown when clicking outside
+            document.addEventListener('click', function closeDropdown(e) {
+                if (!e.target.closest('.user-menu')) {
+                    dropdown.classList.remove('active');
+                    document.removeEventListener('click', closeDropdown);
+                }
+            });
+        }
+
+        function updateUserInterface() {
+            const userName = document.getElementById('userName');
+            const body = document.body;
+            
+            if (currentUser) {
+                userName.textContent = currentUser.name;
+                body.classList.add('logged-in');
+            } else {
+                userName.textContent = 'Guest';
+                body.classList.remove('logged-in');
+            }
+        }
+
+        function showLoginModal() {
+            const modal = document.createElement('div');
+            modal.className = 'modal';
+            modal.innerHTML = `
+                <div class="modal-content">
+                    <button class="modal-close" onclick="closeModal(this)">&times;</button>
+                    <h2>Login</h2>
+                    <form class="modal-form" onsubmit="login(event)">
+                        <input type="email" placeholder="Email" required>
+                        <input type="password" placeholder="Password" required>
+                        <button type="submit">Login</button>
+                    </form>
+                </div>
+            `;
+            document.body.appendChild(modal);
+            setTimeout(() => modal.classList.add('active'), 10);
+        }
+
+        function showSignupModal() {
+            const modal = document.createElement('div');
+            modal.className = 'modal';
+            modal.innerHTML = `
+                <div class="modal-content">
+                    <button class="modal-close" onclick="closeModal(this)">&times;</button>
+                    <h2>Sign Up</h2>
+                    <form class="modal-form" onsubmit="signup(event)">
+                        <input type="text" placeholder="Full Name" required>
+                        <input type="email" placeholder="Email" required>
+                        <input type="password" placeholder="Password" required>
+                        <button type="submit">Sign Up</button>
+                    </form>
+                </div>
+            `;
+            document.body.appendChild(modal);
+            setTimeout(() => modal.classList.add('active'), 10);
+        }
+
+        function closeModal(button) {
+            const modal = button.closest('.modal');
+            modal.classList.remove('active');
+            setTimeout(() => modal.remove(), 300);
+        }
+
+        function login(event) {
+            event.preventDefault();
+            const form = event.target;
+            const email = form.querySelector('input[type="email"]').value;
+            
+            // Simulate login
+            currentUser = {
+                name: 'John Doe',
+                email: email
+            };
+            localStorage.setItem('currentUser', JSON.stringify(currentUser));
+            updateUserInterface();
+            closeModal(form);
+            showNotification('Logged in successfully!');
+        }
+
+        function signup(event) {
+            event.preventDefault();
+            const form = event.target;
+            const name = form.querySelector('input[type="text"]').value;
+            const email = form.querySelector('input[type="email"]').value;
+            
+            // Simulate signup
+            currentUser = { name, email };
+            localStorage.setItem('currentUser', JSON.stringify(currentUser));
+            updateUserInterface();
+            closeModal(form);
+            showNotification('Account created successfully!');
+        }
+
+        function logout() {
+            currentUser = null;
+            localStorage.removeItem('currentUser');
+            updateUserInterface();
+            showNotification('Logged out successfully!');
+        }
+
+        function viewOrders() {
+            // Implement order history view
+            showNotification('Order history feature coming soon!');
+        }
+
+        function viewProfile() {
+            // Implement profile settings
+            showNotification('Profile settings feature coming soon!');
+        }
+
+        // Add these helper functions
+        function isInWishlist(productId) {
+            return wishlist.some(item => item.id === productId);
+        }
+
+        function updateWishlistModal() {
+            const modal = document.querySelector('.wishlist-modal');
+            if (modal) {
+                const itemsContainer = modal.querySelector('.wishlist-items');
+                if (itemsContainer) {
+                    itemsContainer.innerHTML = renderWishlistItems();
+                }
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const productList = document.getElementById('productList');
+            if (!productList) {
+                console.error('Product list element not found');
+                return;
+            }
+
+            productList.innerHTML = products.map(product => {
+                if (!product.price) {
+                    console.error(`Price not found for product: ${product.name}`);
+                    return '';
+                }
+
+                const avgRating = calculateAverageRating(product.id);
+                const priceAdjustmentFactor = getPriceAdjustmentFactor(avgRating);
+                const originalPriceInINR = product.price * 75;
+                const dynamicPriceInINR = originalPriceInINR * priceAdjustmentFactor;
+
+                console.log(`Product: ${product.name}, Original Price: ₹${originalPriceInINR}, Dynamic Price: ₹${dynamicPriceInINR}`);
+
+                return `
+                    <div class="product-card">
+                        <img src="${product.image}" alt="${product.name}">
+                        <h2>${product.name}</h2>
+                        <div class="price-container">
+                            <p class="price">Price: ₹${dynamicPriceInINR.toLocaleString('en-IN')}</p>
+                            <p class="original-price">Original: ₹${originalPriceInINR.toLocaleString('en-IN')}</p>
+                        </div>
+                        <a href="product-details.html?id=${product.id}">View Details</a>
+                    </div>
+                `;
+            }).join('');
+        });
+
+        function calculateAverageRating(productId) {
+            const reviews = JSON.parse(localStorage.getItem(`reviews_${productId}`)) || [];
+            if (reviews.length === 0) return 3; // Default to 3 if no reviews
+            const avgRating = reviews.reduce((sum, review) => sum + review.rating, 0) / reviews.length;
+            return avgRating;
+        }
+
+        function getPriceAdjustmentFactor(avgRating) {
+            if (avgRating >= 4.5) return 1.10; // 10% increase
+            if (avgRating >= 3.5) return 1.05; // 5% increase
+            if (avgRating >= 2.5) return 1.00; // no change
+            if (avgRating >= 1.5) return 0.95; // 5% decrease
+            return 0.90; // 10% decrease
+        }
+    </script>
+</body>
+</html> 
