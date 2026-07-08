@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Details - ShopIQ</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        .original-price {
+            text-decoration: line-through;
+            color: #888; /* Optional: Grey color for the original price */
+            margin-left: 10px;
+        }
+    </style>
+</head>
+<body>
+    <script src="products.js"></script>
+    <header>
+        <nav>
+            <div class="brand">
+                <a href="index.html" class="home-link">
+                    <i class="fas fa-shopping-bag"></i>
+                    <h1>ShopIQ</h1>
+                </a>
+            </div>
+            <div class="search-container">
+                <input type="text" id="searchInput" placeholder="Search products..." onkeyup="searchProducts()">
+            </div>
+            <ul>
+                <li><a href="index.html#shoes">Shoes</a></li>
+                <li><a href="index.html#clothes">Clothes</a></li>
+                <li><a href="index.html#accessories">Accessories</a></li>
+                <li>
+                    <a href="cart.html" style="position: relative;">
+                        <i class="fas fa-shopping-cart"></i>
+                        <span class="cart-count" id="cartCount">0</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+    </header>
+    
+    <main>
+        <div class="product-details">
+            <img src="" alt="" class="product-image" id="productImage">
+            <div class="product-info">
+                <h1 id="productName"></h1>
+                <div class="price">
+                    <span id="productPrice"></span>
+                </div>
+                <p class="description" id="productDescription">
+                    High-quality product with premium materials and excellent craftsmanship.
+                </p>
+                <div class="size-selector">
+                    <h3>Select Size</h3>
+                    <div class="size-options">
+                        <button class="size-btn" onclick="selectSize('S')">S</button>
+                        <button class="size-btn" onclick="selectSize('M')">M</button>
+                        <button class="size-btn" onclick="selectSize('L')">L</button>
+                        <button class="size-btn" onclick="selectSize('XL')">XL</button>
+                        <button class="size-btn" onclick="selectSize('XXL')">XXL</button>
+                    </div>
+                    <div class="size-guide">
+                        <i class="fas fa-ruler"></i>
+                        <a href="#" onclick="showSizeGuide(event)">Size Guide</a>
+                    </div>
+                </div>
+                <div class="product-meta">
+                    <div class="meta-item">
+                        <i class="fas fa-truck"></i>
+                        <span>Free Shipping</span>
+                    </div>
+                    <div class="meta-item">
+                        <i class="fas fa-undo"></i>
+                        <span>30 Days Return</span>
+                    </div>
+                    <div class="meta-item">
+                        <i class="fas fa-shield-alt"></i>
+                        <span>2 Year Warranty</span>
+                    </div>
+                </div>
+                <div class="quantity-selector">
+                    <button onclick="updateQuantity(-1)">-</button>
+                    <span id="quantity">1</span>
+                    <button onclick="updateQuantity(1)">+</button>
+                </div>
+                <div class="product-actions">
+                    <button class="add-to-cart" onclick="addToCart()">
+                        <i class="fas fa-shopping-cart"></i>
+                        Add to Cart
+                    </button>
+                    <a href="cart.html" class="view-cart">
+                        <i class="fas fa-shopping-bag"></i>
+                        View Cart
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+        <section class="reviews-section">
+            <div class="reviews-header">
+                <h2>Customer Reviews</h2>
+                <div class="average-rating">
+                    <span class="rating-number" id="averageRating">0.0</span>
+                    <div class="star-rating" id="averageStars"></div>
+                    <span class="total-reviews" id="totalReviews">(0 reviews)</span>
+                </div>
+            </div>
+            
+            <div class="review-form">
+                <h3>Write a Review</h3>
+                <form id="reviewForm" onsubmit="submitReview(event)">
+                    <input type="text" id="reviewerName" placeholder="Your Name" required maxlength="50">
+                    <div class="rating-input" id="ratingInput">
+                        <span>Your Rating:</span>
+                        <button type="button" onclick="setRating(1)">★</button>
+                        <button type="button" onclick="setRating(2)">★</button>
+                        <button type="button" onclick="setRating(3)">★</button>
+                        <button type="button" onclick="setRating(4)">★</button>
+                        <button type="button" onclick="setRating(5)">★</button>
+                    </div>
+                    <textarea id="reviewComment" placeholder="Share your experience with this product..." required maxlength="500"></textarea>
+                    <button type="submit" class="submit-review">Submit Review</button>
+                </form>
+            </div>
+            
+            <div class="reviews-list" id="reviewsList">
+                <!-- Reviews will be loaded here -->
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>About ShopIQ</h3>
+                <p>Your one-stop destination for fashion and accessories. We provide quality products at the best prices.</p>
+                <div class="social-links">
+                    <a href="#"><i class="fab fa-facebook"></i></a>
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                    <a href="#"><i class="fab fa-twitter"></i></a>
+                    <a href="#"><i class="fab fa-pinterest"></i></a>
+                </div>
+            </div>
+            
+            <div class="footer-section">
+                <h3>Quick Links</h3>
+                <ul>
+                    <li><a href="index.html#shoes">Shoes</a></li>
+                    <li><a href="index.html#clothes">Clothes</a></li>
+                    <li><a href="index.html#accessories">Accessories</a></li>
+                    <li><a href="#">New Arrivals</a></li>
+                    <li><a href="#">Sale</a></li>
+                </ul>
+            </div>
+            
+            <div class="footer-section">
+                <h3>Customer Service</h3>
+                <ul>
+                    <li><a href="#">Contact Us</a></li>
+                    <li><a href="#">Shipping Policy</a></li>
+                    <li><a href="#">Returns & Exchange</a></li>
+                    <li><a href="#">FAQs</a></li>
+                </ul>
+            </div>
+            
+            <div class="footer-section">
+                <h3>Newsletter</h3>
+                <p>Subscribe to receive updates, access to exclusive deals, and more.</p>
+                <div class="newsletter-form">
+                    <input type="email" placeholder="Enter your email">
+                    <button class="subscribe-btn">Subscribe</button>
+                </div>
+            </div>
+        </div>
+        
+        <div class="footer-bottom">
+            <p>&copy; 2024 ShopIQ. All rights reserved.</p>
+            <div class="payment-methods">
+                <i class="fab fa-cc-visa"></i>
+                <i class="fab fa-cc-mastercard"></i>
+                <i class="fab fa-cc-paypal"></i>
+                <i class="fab fa-cc-apple-pay"></i>
+            </div>
+        </div>
+    </footer>
+    
+    <script>
+        let currentRating = 0;
+        let productReviews = [];
+        let currentProductId = null;
+        let wishlist = JSON.parse(localStorage.getItem('wishlist')) || [];
+        let selectedSize = null;
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // Get product ID from URL
+            const urlParams = new URLSearchParams(window.location.search);
+            currentProductId = parseInt(urlParams.get('id'));
+            
+            // Find product in data
+            const product = products.find(p => p.id === currentProductId);
+            
+            if (product) {
+                // Update page title
+                document.title = `${product.name} - ShopIQ`;
+                
+                // Calculate dynamic price based on average rating
+                const avgRating = calculateAverageRating(currentProductId);
+                const priceAdjustmentFactor = getPriceAdjustmentFactor(avgRating);
+                const originalPriceInINR = product.price * 75;
+                const dynamicPriceInINR = originalPriceInINR * priceAdjustmentFactor;
+
+                // Update product details with dynamic price
+                let priceHTML = `₹${dynamicPriceInINR.toLocaleString('en-IN')}`;
+                
+                // Add original price only if it differs from the dynamic price
+                if (dynamicPriceInINR !== originalPriceInINR) {
+                    priceHTML += ` <span class="original-price">₹${originalPriceInINR.toLocaleString('en-IN')}</span>`;
+                }
+
+                document.getElementById('productPrice').innerHTML = priceHTML;
+                
+                // Update product details
+                document.getElementById('productImage').src = product.image;
+                document.getElementById('productImage').alt = product.name;
+                document.getElementById('productName').textContent = product.name;
+                document.getElementById('productDescription').textContent = product.description || 'High-quality product with premium materials and excellent craftsmanship.';
+                
+                // Update wishlist button state
+                const wishlistBtn = document.querySelector('.add-to-wishlist');
+                if (wishlist.some(item => item.id === product.id)) {
+                    wishlistBtn.classList.add('active');
+                    wishlistBtn.innerHTML = '<i class="fas fa-heart"></i> Remove from Wishlist';
+                }
+
+                // Load reviews for this product
+                loadReviews();
+            } else {
+                document.querySelector('.product-details').innerHTML = `
+                    <div class="error-message">
+                        <h2>Product Not Found</h2>
+                        <p>Sorry, the requested product could not be found.</p>
+                        <a href="index.html" class="back-link">Return to Home</a>
+                    </div>
+                `;
+            }
+        });
+
+        function setRating(rating) {
+            currentRating = rating;
+            const buttons = document.querySelectorAll('.rating-input button');
+            buttons.forEach((button, index) => {
+                button.classList.toggle('active', index < rating);
+            });
+        }
+
+        function submitReview(event) {
+            event.preventDefault();
+            
+            if (currentRating === 0) {
+                showNotification('Please select a rating');
+                return;
+            }
+
+            const review = {
+                product_id: currentProductId,
+                user_name: document.getElementById('reviewerName').value,
+                rating: currentRating,
+                comment: document.getElementById('reviewComment').value,
+                created_at: new Date().toISOString()
+            };
+
+            // Get existing reviews
+            productReviews = JSON.parse(localStorage.getItem(`reviews_${currentProductId}`)) || [];
+            
+            // Add new review
+            productReviews.push(review);
+            
+            // Save to localStorage
+            localStorage.setItem(`reviews_${currentProductId}`, JSON.stringify(productReviews));
+            
+            // Reset form
+            document.getElementById('reviewForm').reset();
+            currentRating = 0;
+            setRating(0);
+            
+            // Update reviews display
+            loadReviews();
+            showNotification('Review submitted successfully!');
+        }
+
+        function loadReviews() {
+            // Load reviews from localStorage
+            productReviews = JSON.parse(localStorage.getItem(`reviews_${currentProductId}`)) || [];
+            
+            const reviewsList = document.getElementById('reviewsList');
+            if (!reviewsList) return;
+
+            if (productReviews.length === 0) {
+                reviewsList.innerHTML = '<div class="no-reviews">No reviews yet. Be the first to review this product!</div>';
+                document.getElementById('averageRating').textContent = '0.0';
+                document.getElementById('averageStars').innerHTML = '';
+                document.getElementById('totalReviews').textContent = '(0 reviews)';
+                return;
+            }
+
+            // Calculate average rating
+            const avgRating = productReviews.reduce((sum, review) => sum + review.rating, 0) / productReviews.length;
+            document.getElementById('averageRating').textContent = avgRating.toFixed(1);
+            document.getElementById('averageStars').innerHTML = '★'.repeat(Math.round(avgRating));
+            document.getElementById('totalReviews').textContent = `(${productReviews.length} reviews)`;
+
+            // Display reviews
+            reviewsList.innerHTML = productReviews.map(review => `
+                <div class="review-card">
+                    <div class="review-header">
+                        <span class="reviewer-name">${review.user_name}</span>
+                        <span class="review-date">${new Date(review.created_at).toLocaleDateString()}</span>
+                    </div>
+                    <div class="review-rating">
+                        ${'★'.repeat(review.rating)}${'☆'.repeat(5-review.rating)}
+                    </div>
+                    <p class="review-comment">${review.comment}</p>
+                </div>
+            `).join('');
+        }
+
+        // Initialize cart from localStorage
+        let cart = JSON.parse(localStorage.getItem('cart')) || [];
+        updateCartCount();
+
+        function addToCart() {
+            const product = products.find(p => p.id === currentProductId);
+            if (product) {
+                if (!selectedSize) {
+                    showNotification('Please select a size', 'error');
+                    return;
+                }
+                const quantity = parseInt(document.getElementById('quantity').value) || 1;
+                // Check if product already exists in cart
+                const existingItem = cart.find(item => item.id === currentProductId && item.size === selectedSize);
+                if (existingItem) {
+                    existingItem.quantity += quantity;
+                } else {
+                    cart.push({
+                        id: product.id,
+                        name: product.name,
+                        price: product.price,
+                        image: product.image,
+                        size: selectedSize,
+                        quantity: quantity
+                    });
+                }
+                localStorage.setItem('cart', JSON.stringify(cart));
+                updateCartCount();
+                showNotification('Product added to cart!');
+            }
+        }
+
+        function updateCartCount() {
+            const cartCount = document.getElementById('cartCount');
+            const itemCount = cart.reduce((sum, item) => sum + item.quantity, 0);
+            cartCount.textContent = itemCount;
+            cartCount.style.display = itemCount > 0 ? 'block' : 'none';
+        }
+
+        function showNotification(message) {
+            const notification = document.createElement('div');
+            notification.className = 'notification';
+            notification.textContent = message;
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.classList.add('show');
+                setTimeout(() => {
+                    notification.classList.remove('show');
+                    setTimeout(() => {
+                        notification.remove();
+                    }, 300);
+                }, 2000);
+            }, 100);
+        }
+
+        // Add the search functionality
+        function searchProducts() {
+            window.location.href = `index.html?search=${document.getElementById('searchInput').value}`;
+        }
+
+        function toggleWishlistItem(productId) {
+            const product = products.find(p => p.id === productId);
+            const index = wishlist.findIndex(item => item.id === productId);
+            const wishlistBtn = document.querySelector('.add-to-wishlist');
+            
+            if (index === -1 && product) {
+                wishlist.push(product);
+                showNotification('Added to wishlist!');
+                wishlistBtn.classList.add('active');
+                wishlistBtn.innerHTML = '<i class="fas fa-heart"></i> Remove from Wishlist';
+            } else {
+                wishlist.splice(index, 1);
+                showNotification('Removed from wishlist!');
+                wishlistBtn.classList.remove('active');
+                wishlistBtn.innerHTML = '<i class="fas fa-heart"></i> Add to Wishlist';
+            }
+            
+            localStorage.setItem('wishlist', JSON.stringify(wishlist));
+        }
+
+        function updateQuantity(change) {
+            const quantityElement = document.getElementById('quantity');
+            let quantity = parseInt(quantityElement.textContent) + change;
+            quantity = Math.max(1, quantity); // Ensure quantity doesn't go below 1
+            quantityElement.textContent = quantity;
+        }
+
+        function selectSize(size) {
+            selectedSize = size;
+            // Update UI
+            document.querySelectorAll('.size-btn').forEach(btn => {
+                btn.classList.toggle('selected', btn.textContent === size);
+            });
+        }
+
+        function showSizeGuide(event) {
+            event.preventDefault();
+            // Create and show modal
+            const modal = document.createElement('div');
+            modal.className = 'size-guide-modal';
+            modal.innerHTML = `
+                <h2>Size Guide</h2>
+                <table>
+                    <tr>
+                        <th>Size</th>
+                        <th>Chest (inches)</th>
+                        <th>Waist (inches)</th>
+                        <th>Length (inches)</th>
+                    </tr>
+                    <tr>
+                        <td>S</td>
+                        <td>36-38</td>
+                        <td>30-32</td>
+                        <td>27</td>
+                    </tr>
+                    <tr>
+                        <td>M</td>
+                        <td>38-40</td>
+                        <td>32-34</td>
+                        <td>28</td>
+                    </tr>
+                    <tr>
+                        <td>L</td>
+                        <td>40-42</td>
+                        <td>34-36</td>
+                        <td>29</td>
+                    </tr>
+                    <tr>
+                        <td>XL</td>
+                        <td>42-44</td>
+                        <td>36-38</td>
+                        <td>30</td>
+                    </tr>
+                    <tr>
+                        <td>XXL</td>
+                        <td>44-46</td>
+                        <td>38-40</td>
+                        <td>31</td>
+                    </tr>
+                </table>
+                <button onclick="closeModal()" class="close-modal">Close</button>
+            `;
+            
+            const overlay = document.createElement('div');
+            overlay.className = 'modal-overlay';
+            
+            document.body.appendChild(overlay);
+            document.body.appendChild(modal);
+            
+            setTimeout(() => {
+                modal.classList.add('active');
+                overlay.classList.add('active');
+            }, 10);
+        }
+
+        function closeModal() {
+            const modal = document.querySelector('.size-guide-modal');
+            const overlay = document.querySelector('.modal-overlay');
+            
+            modal.classList.remove('active');
+            overlay.classList.remove('active');
+            
+            setTimeout(() => {
+                modal.remove();
+                overlay.remove();
+            }, 300);
+        }
+
+        function handleLogout() {
+            localStorage.removeItem('currentUser');
+            localStorage.removeItem('cart');
+            localStorage.removeItem('wishlist');
+            showNotification('Logged out successfully', 'success');
+            setTimeout(() => {
+                window.location.href = 'login.html';
+            }, 1500);
+        }
+
+        function calculateAverageRating(productId) {
+            const reviews = JSON.parse(localStorage.getItem(`reviews_${productId}`)) || [];
+            if (reviews.length === 0) return 3; // Default to 3 if no reviews
+            const avgRating = reviews.reduce((sum, review) => sum + review.rating, 0) / reviews.length;
+            return avgRating;
+        }
+
+        function getPriceAdjustmentFactor(avgRating) {
+            if (avgRating >= 4.5) return 1.10; // 10% increase
+            if (avgRating >= 3.5) return 1.05; // 5% increase
+            if (avgRating >= 2.5) return 1.00; // no change
+            if (avgRating >= 1.5) return 0.95; // 5% decrease
+            return 0.90; // 10% decrease
+        }
+
+        function toggleWishlist() {
+            const wishlistCountElement = document.getElementById('wishlistCount');
+            let count = parseInt(wishlistCountElement.textContent, 10);
+            count = (count + 1) % 10; // Example logic to increment and reset count
+            wishlistCountElement.textContent = count;
+            alert('Item added to wishlist!');
+        }
+    </script>
+</body>
+</html> 
